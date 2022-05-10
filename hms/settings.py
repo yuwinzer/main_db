@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 from decouple import config # for sensitive data .env
+from os import path as opath
+from sys import path as spath
+
+
+# you can use all the apps in 'apps' folder just in the same way as they were in your project root
+PROJECT_ROOT = opath.dirname(__file__)
+spath.insert(0, opath.join(PROJECT_ROOT, 'apps'))
 
 
 
@@ -40,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'apps.clients',
+    'apps.orders',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +62,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'hms.urls'
+
 
 TEMPLATES = [
     {
