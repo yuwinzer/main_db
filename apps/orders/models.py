@@ -6,8 +6,8 @@ from apps.media.models import Media
 
 class OrderStatus(models.Model):
     """a unit of measurement"""
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200)
+    title = models.CharField(max_length=32)
+    note = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         db_table = "order_statuses"
@@ -17,10 +17,10 @@ class Order(models.Model):
     """a unit of measurement"""
     status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    deadline = models.DateField()
+    deadline = models.DateField(null=True, blank=True)
     source = models.ForeignKey(Source, on_delete=models.CASCADE)
     created_at = models.DateTimeField()
-    note = models.CharField(max_length=200)
+    note = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         db_table = "orders"

@@ -13,7 +13,7 @@ class SalaryRate(models.Model):
 
 class ElectricityTariff(models.Model):
     date = models.DateField()
-    salary = models.DecimalField(max_digits=8, decimal_places=2)
+    tariff = models.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:
         db_table = "electricity_tariffs"
@@ -31,11 +31,11 @@ class USDExchangeRate(models.Model):
 
 class ProductCostPrice(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    printing_time = models.DecimalField(max_digits=8, decimal_places=2)
-    polishing_time = models.DecimalField(max_digits=8, decimal_places=2)
-    gluing_time = models.DecimalField(max_digits=8, decimal_places=2)
-    painting_time = models.DecimalField(max_digits=8, decimal_places=2)
-    sewing_time = models.DecimalField(max_digits=8, decimal_places=2)
+    printing_time = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    polishing_time = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    gluing_time = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    painting_time = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    sewing_time = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 
     class Meta:
         db_table = "product_cost_prices"

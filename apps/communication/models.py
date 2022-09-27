@@ -11,8 +11,8 @@ class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     source = models.ForeignKey(Source, on_delete=models.CASCADE)
-    link = models.CharField(max_length=1048)
-    is_sent_to_customer = models.BooleanField()
+    link = models.CharField(max_length=1048, null=True, blank=True)
+    is_sent_to_customer = models.BooleanField(default=False)
 
     class Meta:
         db_table = "messages"

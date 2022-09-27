@@ -1,0 +1,33 @@
+:root {
+  --purple: #b17bff;
+  --grey: #959598FF;
+  --dark-grey: #202124;
+}
+
+body {
+  color: var(--grey); /* text color */
+  background-color: var(--dark-grey);
+}
+
+h1, h2 {
+  color: var(--purple);
+}
+
+/*LINKS*/
+/* unvisited link */
+a:link {
+    color: var(--grey);
+    text-decoration: none;
+}
+
+/* visited link */
+a:visited {
+    color: var(--grey);
+    text-decoration: none;
+}
+
+/* mouse over link */
+a:hover {
+    color: var(--purple);
+    text-decoration: underline;
+}

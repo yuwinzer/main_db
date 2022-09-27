@@ -22,7 +22,7 @@ class TrackNumber(models.Model):
 class TrackNumberHistory(models.Model):
     track_number = models.ForeignKey(TrackNumber, on_delete=models.CASCADE)
     datetime = models.DateTimeField()
-    place = models.CharField(max_length=200)
+    place = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         db_table = "track_numbers_history"
@@ -48,9 +48,9 @@ class Package(models.Model):
     receiver = models.ForeignKey(Customer, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     shipped_at = models.DateTimeField()
-    arrived_at = models.DateTimeField()
+    arrived_at = models.DateTimeField(null=True, blank=True)
     order = models.ManyToManyField(Order)
-    note = models.CharField(max_length=200)
+    note = models.CharField(max_length=200, null=True, blank=True)
     track_number = models.ForeignKey(TrackNumber, on_delete=models.CASCADE)
     weight = models.FloatField()
     sizes = models.CharField(max_length=32)

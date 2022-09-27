@@ -16,25 +16,25 @@ class ProductStyle(models.Model):
 
 class ProductCategory(models.Model):
     title = models.CharField(max_length=64)
-    parent_category = models.ForeignKey(to="self", on_delete=models.CASCADE)
-    note = models.CharField(max_length=200)
+    parent_category = models.ForeignKey(to="self", on_delete=models.CASCADE, null=True, blank=True)
+    note = models.CharField(max_length=200, blank=True)
 
     class Meta:
         db_table = "product_categories"
 
 
 class ProductSize(models.Model):
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200)
+    title = models.CharField(max_length=64)
+    note = models.CharField(max_length=200, blank=True)
 
     class Meta:
         db_table = "product_sizes"
 
 
 class ProductColor(models.Model):
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200)
-    media_thumbnail = models.ForeignKey(Media, on_delete=models.CASCADE)
+    title = models.CharField(max_length=64)
+    note = models.CharField(max_length=200, blank=True)
+    media_thumbnail = models.ForeignKey(Media, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         db_table = "product_colors"
@@ -45,21 +45,21 @@ class ProductBlueprint(models.Model):
     style_id = models.ForeignKey(ProductStyle, on_delete=models.CASCADE)
     category_id = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
     size_id = models.ForeignKey(ProductSize, on_delete=models.CASCADE)
-    new_version_of = models.ForeignKey("self", related_name='new_version_of_design', on_delete=models.CASCADE)
-    part_of = models.ForeignKey("self", related_name='part_of_assembly', on_delete=models.CASCADE)
+    new_version_of = models.ForeignKey("self", related_name='new_version_of_design', on_delete=models.CASCADE, null=True, blank=True)
+    part_of = models.ForeignKey("self", related_name='part_of_assembly', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     color = models.ForeignKey(ProductColor, on_delete=models.CASCADE)
-    fabric = models.ForeignKey(Fabric, on_delete=models.CASCADE)
-    media = models.ManyToManyField(Media)
-    component = models.ManyToManyField(ComponentBlueprint)
+    fabric = models.ForeignKey(Fabric, on_delete=models.CASCADE, null=True, blank=True)
+    media = models.ManyToManyField(Media, blank=True)
+    component = models.ManyToManyField(ComponentBlueprint, blank=True)
 
     class Meta:
         db_table = "product_blueprints"
 
 
 class ProductStatus(models.Model):
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200)
+    title = models.CharField(max_length=64)
+    note = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         db_table = "product_statuses"
@@ -67,14 +67,14 @@ class ProductStatus(models.Model):
 
 class Product(models.Model):
     product_blueprint = models.ForeignKey(ProductBlueprint, on_delete=models.CASCADE)
-    reserved_for = models.ForeignKey("self", on_delete=models.CASCADE)
+    reserved_for = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
     warehouse_id = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     status = models.ForeignKey(ProductStatus, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    cost_price = models.DecimalField(max_digits=8, decimal_places=2)
-    sold_price = models.DecimalField(max_digits=8, decimal_places=2)
-    publish_date = models.DateField()
-    sold_date = models.DateField()
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
+    cost_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    sold_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    publish_date = models.DateField(null=True, blank=True)
+    sold_date = models.DateField(null=True, blank=True)
     is_gift = models.BooleanField(default=False)
     is_replacement = models.BooleanField(default=False)
 

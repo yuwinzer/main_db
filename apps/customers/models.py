@@ -3,8 +3,8 @@ from django.db import models
 
 class Customer(models.Model):
     nickname = models.CharField(max_length=128)
-    email = models.EmailField(max_length=64)
-    friends = models.ManyToManyField("self")
+    email = models.EmailField(max_length=64, blank=True)
+    friends = models.ManyToManyField("self", blank=True)
 
     class Meta:
         db_table = "customers"
@@ -26,7 +26,7 @@ class Country(models.Model):
 
 class Source(models.Model):
     name = models.CharField(max_length=128)
-    link = models.CharField(max_length=1024)
+    link = models.CharField(max_length=1024, blank=True)
 
     class Meta:
         db_table = "sources"
@@ -35,7 +35,7 @@ class Source(models.Model):
 class CustomerSource(models.Model):
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
     source_id = models.ForeignKey(Source, on_delete=models.CASCADE)
-    link = models.CharField(max_length=1024)
+    link = models.CharField(max_length=1024, null=True, blank=True)
 
     class Meta:
         db_table = "customer_sources"

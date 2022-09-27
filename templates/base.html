@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href = "{% static 'css/base.css' %}" rel = 'stylesheet'>
+</head>
+<body>
+<!--NAV-->
+<h2>Links</h2>
+<a href="/">Main</a><br>
+<a href="/customers">Customers</a><br>
+<a href="/users">Users</a><br>
+<a href="/orders">Orders</a><br>
+<a href="/packages">Packages</a><br>
+<a href="/products">Products</a><br>
+<a href="/components">Components</a><br>
+<a href="/warehouses">Warehouses</a><br>
+<a href="/finance">Finance</a><br>
+<a href="/communication">Communication</a><br>
+<a href="/media">Media</a><br>
+<!--CONTENT-->
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+
+<!--FOOTER-->
+    {% block footer %}
+        <footer>
+            <div>
+                <p>Copyright © 2022, Yuwinzer</p>
+            </div>
+        </footer>
+    {% endblock %}
+</body>
+</html>

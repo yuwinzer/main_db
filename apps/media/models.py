@@ -2,8 +2,8 @@ from django.db import models
 
 
 class MediaFolder(models.Model):
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200)
+    title = models.CharField(max_length=32)
+    note = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         db_table = "media_folders"
@@ -11,8 +11,8 @@ class MediaFolder(models.Model):
 
 class MediaType(models.Model):
     """image, video, audiofile"""
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200)
+    title = models.CharField(max_length=24)
+    note = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         db_table = "media_types"
@@ -29,8 +29,8 @@ class Media(models.Model):
 
 class MediaTag(models.Model):
     """media files"""
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200)
+    title = models.CharField(max_length=24)
+    note = models.CharField(max_length=200, null=True, blank=True)
     media = models.ManyToManyField(Media)
 
     class Meta:
