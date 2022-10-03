@@ -1,41 +1,65 @@
 from django.db import models
 
 
+class Source(models.Model):
+    title = models.CharField(max_length=128)
+    link = models.CharField(max_length=1024, blank=True)
+
+    class Meta:
+        db_table = "sources"
+
+    def __str__(self):
+        return f'{self.title}'
+
+
+class CustomerSource(models.Model):
+    source_id = models.ForeignKey(Source, on_delete=models.CASCADE)
+    unique_name = models.CharField(max_length=1024)
+
+    class Meta:
+        db_table = "customer_sources"
+
+    def __str__(self):
+        return f'{self.source_id} @{self.unique_name}'
+
+
 class Customer(models.Model):
-    nickname = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, blank=True)
+    customer_source = models.ManyToManyField(CustomerSource)
     email = models.EmailField(max_length=64, blank=True)
     friends = models.ManyToManyField("self", blank=True)
 
     class Meta:
         db_table = "customers"
 
-
-class Address(models.Model):
-    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "addresses"
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=128)
+    title = models.CharField(max_length=128)
 
     class Meta:
         db_table = "countries"
+        verbose_name_plural = "countries"
+
+    def __str__(self):
+        return f'{self.title}'
 
 
-class Source(models.Model):
-    name = models.CharField(max_length=128)
-    link = models.CharField(max_length=1024, blank=True)
+class Address(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    state_to_city_line = models.CharField(max_length=512)
+    street_to_app_line = models.CharField(max_length=512)
+    receiver_name = models.CharField(max_length=256)
+    payer_name = models.CharField(max_length=256)
+    phone_number_provided = models.CharField(max_length=50)
+    phone_number_formatted = models.CharField(max_length=50)
 
     class Meta:
-        db_table = "sources"
+        db_table = "addresses"
+        verbose_name_plural = "addresses"
 
-
-class CustomerSource(models.Model):
-    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    source_id = models.ForeignKey(Source, on_delete=models.CASCADE)
-    link = models.CharField(max_length=1024, null=True, blank=True)
-
-    class Meta:
-        db_table = "customer_sources"
+    def __str__(self):
+        return f'{self.receiver_name}{self.country}{self.state_to_city_line}{self.street_to_app_line}'

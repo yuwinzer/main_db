@@ -8,18 +8,43 @@
 </head>
 <body>
 <!--NAV-->
-<h2>Links</h2>
-<a href="/">Main</a><br>
-<a href="/customers">Customers</a><br>
-<a href="/users">Users</a><br>
-<a href="/orders">Orders</a><br>
-<a href="/packages">Packages</a><br>
-<a href="/products">Products</a><br>
-<a href="/components">Components</a><br>
-<a href="/warehouses">Warehouses</a><br>
-<a href="/finance">Finance</a><br>
-<a href="/communication">Communication</a><br>
-<a href="/media">Media</a><br>
+<div id="outer">
+    <div class="grey-form">
+        <div class="inner">
+            <form action="/"><input type="submit" value="Main"/></form>
+        </div>
+        <div class="inner">
+            <form action="/customers"><input type="submit" value="Customers"/></form>
+        </div>
+        <div class="inner">
+            <form action="/users"><input type="submit" value="Users"/></form>
+        </div>
+        <div class="inner">
+            <form action="/orders"><input type="submit" value="Orders"/></form>
+        </div>
+        <div class="inner">
+            <form action="/packages"><input type="submit" value="Packages"/></form>
+        </div>
+        <div class="inner">
+            <form action="/products"><input type="submit" value="Products"/></form>
+        </div>
+        <div class="inner">
+            <form action="/components"><input type="submit" value="Components"/></form>
+        </div>
+        <div class="inner">
+            <form action="/warehouses"><input type="submit" value="Warehouses"/></form>
+        </div>
+        <div class="inner">
+            <form action="/finance"><input type="submit" value="Finance"/></form>
+        </div>
+        <div class="inner">
+            <form action="/communication"><input type="submit" value="Communication"/></form>
+        </div>
+        <div class="inner">
+            <form action="/media"><input type="submit" value="Media"/></form>
+        </div>
+    </div>
+</div>
 <!--CONTENT-->
     <div>
         {% block content %}{% endblock %}
@@ -28,7 +53,7 @@
 <!--FOOTER-->
     {% block footer %}
         <footer>
-            <div>
+            <div class="grey-form">
                 <p>Copyright © 2022, Yuwinzer</p>
             </div>
         </footer>

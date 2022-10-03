@@ -11,6 +11,10 @@ class OrderStatus(models.Model):
 
     class Meta:
         db_table = "order_statuses"
+        verbose_name_plural = "order_statuses"
+
+    def __str__(self):
+        return f'{self.title}'
 
 
 class Order(models.Model):

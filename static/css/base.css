@@ -4,6 +4,14 @@
   --dark-grey: #202124;
 }
 
+html {
+  max-width: 70ch;
+  padding: 3em 1em;
+  margin: auto;
+  line-height: 1.75;
+  font-size: 1.25em;
+}
+
 body {
   color: var(--grey); /* text color */
   background-color: var(--dark-grey);
@@ -16,13 +24,13 @@ h1, h2 {
 /*LINKS*/
 /* unvisited link */
 a:link {
-    color: var(--grey);
+    color: var(--purple);
     text-decoration: none;
 }
 
 /* visited link */
 a:visited {
-    color: var(--grey);
+    color: var(--purple);
     text-decoration: none;
 }
 
@@ -30,4 +38,19 @@ a:visited {
 a:hover {
     color: var(--purple);
     text-decoration: underline;
+}
+
+/*for render in one line .inner in .outer div*/
+#outer {
+    width: 100%;
+    text-align: center;
+}
+
+.inner {
+    display: inline-block;
+}
+
+.grey-form {
+    background-color: var(--grey);
+    color: var(--dark-grey); /* text color */
 }
