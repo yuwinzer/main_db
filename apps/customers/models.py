@@ -12,21 +12,21 @@ class Source(models.Model):
         return f'{self.title}'
 
 
-class CustomerSource(models.Model):
-    source_id = models.ForeignKey(Source, on_delete=models.CASCADE)
+class CustomerContact(models.Model):
+    source = models.ForeignKey(Source, on_delete=models.CASCADE)
     unique_name = models.CharField(max_length=1024)
 
     class Meta:
-        db_table = "customer_sources"
+        db_table = "customer_contacts"
+        verbose_name_plural = "customer contacts"
 
     def __str__(self):
-        return f'{self.source_id} @{self.unique_name}'
+        return f'{self.source} @{self.unique_name}'
 
 
 class Customer(models.Model):
     name = models.CharField(max_length=128, blank=True)
-    customer_source = models.ManyToManyField(CustomerSource)
-    email = models.EmailField(max_length=64, blank=True)
+    customer_contact = models.ManyToManyField(CustomerContact)
     friends = models.ManyToManyField("self", blank=True)
 
     class Meta:
@@ -54,12 +54,9 @@ class Address(models.Model):
     street_to_app_line = models.CharField(max_length=512)
     receiver_name = models.CharField(max_length=256)
     payer_name = models.CharField(max_length=256)
-    phone_number_provided = models.CharField(max_length=50)
-    phone_number_formatted = models.CharField(max_length=50)
+    phone_number_provided = models.CharField(max_length=50, blank=True)
+    phone_number_formatted = models.CharField(max_length=50, blank=True)
 
     class Meta:
         db_table = "addresses"
         verbose_name_plural = "addresses"
-
-    def __str__(self):
-        return f'{self.receiver_name}{self.country}{self.state_to_city_line}{self.street_to_app_line}'

@@ -11,7 +11,7 @@ class OrderStatus(models.Model):
 
     class Meta:
         db_table = "order_statuses"
-        verbose_name_plural = "order_statuses"
+        verbose_name_plural = "order statuses"
 
     def __str__(self):
         return f'{self.title}'
