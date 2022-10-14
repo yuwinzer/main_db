@@ -5,7 +5,9 @@ from django.core.management.base import BaseCommand
 
 from apps.customers.models import Source, CustomerContact, Address, Customer
 from apps.customers.models import Country
+from apps.products.models import ProductStyle, ProductScale, ProductCategory, ProductColor
 from apps.users.models import User
+from apps.warehouses.models import Warehouse
 
 DEFAULT_USER_PASSWORD = "123"
 
@@ -143,3 +145,79 @@ class Command(BaseCommand):
             new_address.save()
             addresses_num += 1
         print(f"Loaded customers.models.Address: {addresses_num}")
+
+        #   #   #   #   #   #   APPS.PRODUCTS     #   #   #   #   #   #   #   #   #   #
+
+        json_products_path = os.path.join("apps", "products", "fixtures")
+
+        product_styles = load_from_json(json_products_path, "product_styles")
+        ProductStyle.objects.all().delete()
+        product_styles_num = 0
+        for product_style in product_styles:
+            new_product_style = ProductStyle.objects.create(
+                id=product_style["pk"],
+                title=product_style["fields"]["title"],
+            )
+            new_product_style.save()
+            product_styles_num += 1
+        print(f"Loaded products.models.ProductStyle: {product_styles_num}")
+
+        product_scales = load_from_json(json_products_path, "product_scales")
+        ProductScale.objects.all().delete()
+        product_scales_num = 0
+        for product_scale in product_scales:
+            new_product_scale = ProductScale.objects.create(
+                id=product_scale["pk"],
+                title=product_scale["fields"]["title"],
+                note=product_scale["fields"]["note"],
+            )
+            new_product_scale.save()
+            product_scales_num += 1
+        print(f"Loaded products.models.ProductScale: {product_scales_num}")
+
+        product_categories = load_from_json(json_products_path, "product_categories")
+        ProductCategory.objects.all().delete()
+        product_category_num = 0
+        for product_category in product_categories:
+            new_product_category = ProductCategory.objects.create(
+                id=product_category["pk"],
+                title=product_category["fields"]["title"],
+                parent_category=product_category["fields"]["parent_category"],
+                note=product_category["fields"]["note"],
+            )
+            new_product_category.save()
+            product_category_num += 1
+        print(f"Loaded products.models.ProductCategory: {product_category_num}")
+
+        product_colors = load_from_json(json_products_path, "product_colors")
+        ProductColor.objects.all().delete()
+        product_colors_num = 0
+        for product_color in product_colors:
+            new_product_color = ProductColor.objects.create(
+                id=product_color["pk"],
+                title=product_color["fields"]["title"],
+                note=product_color["fields"]["note"],
+                media_thumbnail=product_color["fields"]["media_thumbnail"],
+            )
+            new_product_color.save()
+            product_colors_num += 1
+        print(f"Loaded products.models.ProductColor: {product_colors_num}")
+
+        #   #   #   #   #   #   APPS.PRODUCTS     #   #   #   #   #   #   #   #   #   #
+
+        json_warehouses_path = os.path.join("apps", "warehouses", "fixtures")
+
+        warehouses = load_from_json(json_warehouses_path, "warehouses")
+        Warehouse.objects.all().delete()
+        warehouse_num = 0
+        for warehouse in warehouses:
+            owner, created = User.objects.get_or_create(id=warehouse["fields"]["owner"])
+            new_warehouse = Warehouse.objects.create(
+                id=warehouse["pk"],
+                title=warehouse["fields"]["title"],
+                address_line=warehouse["fields"]["address_line"],
+                owner=owner,
+            )
+            new_warehouse.save()
+            warehouse_num += 1
+        print(f"Loaded warehouses.models.Warehouse: {warehouse_num}")

@@ -13,6 +13,9 @@ class ProductStyle(models.Model):
     class Meta:
         db_table = "product_styles"
 
+    def __str__(self):
+        return f'{self.title}'
+
 
 class ProductCategory(models.Model):
     title = models.CharField(max_length=64)
@@ -21,14 +24,21 @@ class ProductCategory(models.Model):
 
     class Meta:
         db_table = "product_categories"
+        verbose_name_plural = "product categories"
+
+    def __str__(self):
+        return f'{self.title}'
 
 
-class ProductSize(models.Model):
+class ProductScale(models.Model):
     title = models.CharField(max_length=64)
     note = models.CharField(max_length=200, blank=True)
 
     class Meta:
         db_table = "product_sizes"
+
+    def __str__(self):
+        return f'{self.title}'
 
 
 class ProductColor(models.Model):
@@ -39,12 +49,15 @@ class ProductColor(models.Model):
     class Meta:
         db_table = "product_colors"
 
+    def __str__(self):
+        return f'{self.title}'
+
 
 class ProductBlueprint(models.Model):
     title = models.CharField(max_length=256)
     style_id = models.ForeignKey(ProductStyle, on_delete=models.CASCADE)
     category_id = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
-    size_id = models.ForeignKey(ProductSize, on_delete=models.CASCADE)
+    size_id = models.ForeignKey(ProductScale, on_delete=models.CASCADE)
     new_version_of = models.ForeignKey("self", related_name='new_version_of_design', on_delete=models.CASCADE, null=True, blank=True)
     part_of = models.ForeignKey("self", related_name='part_of_assembly', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -63,6 +76,7 @@ class ProductStatus(models.Model):
 
     class Meta:
         db_table = "product_statuses"
+        verbose_name_plural = "product statuses"
 
 
 class Product(models.Model):
