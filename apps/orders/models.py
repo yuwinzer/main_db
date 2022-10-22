@@ -29,6 +29,9 @@ class Order(models.Model):
     class Meta:
         db_table = "orders"
 
+    def __str__(self):
+        return f"{self.customer} - {self.created_at}"
+
 
 class OrderImage(models.Model):
     """a unit of measurement"""

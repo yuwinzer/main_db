@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.components.models import ComponentBlueprint, Fabric
+from apps.components.models import ComponentBlueprint
 from apps.customers.models import Customer
 from apps.media.models import Media
 from apps.orders.models import Order
@@ -14,7 +14,7 @@ class ProductStyle(models.Model):
         db_table = "product_styles"
 
     def __str__(self):
-        return f'{self.title}'
+        return f"{self.title}"
 
 
 class ProductCategory(models.Model):
@@ -27,7 +27,7 @@ class ProductCategory(models.Model):
         verbose_name_plural = "product categories"
 
     def __str__(self):
-        return f'{self.title}'
+        return f"{self.title}"
 
 
 class ProductScale(models.Model):
@@ -38,7 +38,7 @@ class ProductScale(models.Model):
         db_table = "product_sizes"
 
     def __str__(self):
-        return f'{self.title}'
+        return f"{self.title}"
 
 
 class ProductColor(models.Model):
@@ -50,7 +50,7 @@ class ProductColor(models.Model):
         db_table = "product_colors"
 
     def __str__(self):
-        return f'{self.title}'
+        return f"{self.title}"
 
 
 class ProductBlueprint(models.Model):
@@ -58,16 +58,26 @@ class ProductBlueprint(models.Model):
     style_id = models.ForeignKey(ProductStyle, on_delete=models.CASCADE)
     category_id = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
     size_id = models.ForeignKey(ProductScale, on_delete=models.CASCADE)
-    new_version_of = models.ForeignKey("self", related_name='new_version_of_design', on_delete=models.CASCADE, null=True, blank=True)
-    part_of = models.ForeignKey("self", related_name='part_of_assembly', on_delete=models.CASCADE, null=True, blank=True)
+    new_version_of = models.ForeignKey(
+        "self", related_name="new_version_of_design", on_delete=models.CASCADE, null=True, blank=True
+    )
+    part_of = models.ForeignKey(
+        "self", related_name="part_of_assembly", on_delete=models.CASCADE, null=True, blank=True
+    )
     is_active = models.BooleanField(default=True)
-    color = models.ForeignKey(ProductColor, on_delete=models.CASCADE)
-    fabric = models.ForeignKey(Fabric, on_delete=models.CASCADE, null=True, blank=True)
+    base_color = models.ForeignKey(ProductColor, related_name="base_color", on_delete=models.CASCADE)
+    second_color = models.ForeignKey(
+        ProductColor, related_name="second_color", null=True, blank=True, on_delete=models.CASCADE
+    )
+    # fabric = models.ManyToManyField(Fabric, blank=True)
     media = models.ManyToManyField(Media, blank=True)
     component = models.ManyToManyField(ComponentBlueprint, blank=True)
 
     class Meta:
         db_table = "product_blueprints"
+
+    def __str__(self):
+        return f"{self.title}"
 
 
 class ProductStatus(models.Model):
@@ -77,6 +87,9 @@ class ProductStatus(models.Model):
     class Meta:
         db_table = "product_statuses"
         verbose_name_plural = "product statuses"
+
+    def __str__(self):
+        return f"{self.title}"
 
 
 class Product(models.Model):
@@ -92,8 +105,18 @@ class Product(models.Model):
     is_gift = models.BooleanField(default=False)
     is_replacement = models.BooleanField(default=False)
 
+    @property
+    def fabrics(self):
+        fabrics = []
+        for component in self.product_blueprint.component.all():
+            if component.type.title == "Fabric":
+                fabrics.append(component.title)
+        return ",".join(fabrics)
     class Meta:
         db_table = "products"
+
+    def __str__(self):
+        return f"{self.product_blueprint} {self.product_blueprint.base_color} {self.product_blueprint.second_color} {self.fabrics}"
 
 
 class ProductRefund(models.Model):
@@ -104,11 +127,18 @@ class ProductRefund(models.Model):
     class Meta:
         db_table = "product_refunds"
 
+    def __str__(self):
+        return f"{self.product}"
+
 
 class NewDesignRequest(models.Model):
     """a unit of measurement"""
+
     product_blueprint = models.ForeignKey(ProductBlueprint, on_delete=models.CASCADE)
     requested_by = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "new_design_requests"
+
+    def __str__(self):
+        return f"{self.product_blueprint}"

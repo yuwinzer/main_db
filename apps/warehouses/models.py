@@ -10,3 +10,6 @@ class Warehouse(models.Model):
 
     class Meta:
         db_table = "warehouses"
+
+    def __str__(self):
+        return f"{self.title}"
