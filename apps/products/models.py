@@ -112,11 +112,13 @@ class Product(models.Model):
             if component.type.title == "Fabric":
                 fabrics.append(component.title)
         return ",".join(fabrics)
+
     class Meta:
         db_table = "products"
 
     def __str__(self):
-        return f"{self.product_blueprint} {self.product_blueprint.base_color} {self.product_blueprint.second_color} {self.fabrics}"
+        return f"{self.product_blueprint} {self.product_blueprint.base_color} " \
+               f"{self.product_blueprint.second_color} {self.fabrics}"
 
 
 class ProductRefund(models.Model):
