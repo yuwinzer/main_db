@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand
 
 from apps.customers.models import Source, CustomerContact, Address, Customer
 from apps.customers.models import Country
+from apps.orders.models import Order, OrderStatus
 from apps.products.models import ProductStyle, ProductScale, ProductCategory, ProductColor
 from apps.users.models import User
 from apps.warehouses.models import Warehouse
@@ -134,13 +135,15 @@ class Command(BaseCommand):
             new_address = Address.objects.create(
                 id=address["pk"],
                 customer=customer,
-                country=country,
-                state_to_city_line=address["fields"]["state_to_city_line"],
-                street_to_app_line=address["fields"]["street_to_app_line"],
                 receiver_name=address["fields"]["receiver_name"],
-                payer_name=address["fields"]["payer_name"],
-                phone_number_provided=address["fields"]["phone_number_provided"],
-                phone_number_formatted=address["fields"]["phone_number_formatted"],
+                country=country,
+                raw_address_line=address["fields"]["raw_address_line"],
+                region_state=address["fields"]["region_state"],
+                city=address["fields"]["city"],
+                address=address["fields"]["address"],
+                zip_code=address["fields"]["zip_code"],
+                raw_phone_number=address["fields"]["raw_phone_number"],
+                phone_number=address["fields"]["phone_number"],
             )
             new_address.save()
             addresses_num += 1
@@ -203,7 +206,7 @@ class Command(BaseCommand):
             product_colors_num += 1
         print(f"Loaded products.models.ProductColor: {product_colors_num}")
 
-        #   #   #   #   #   #   APPS.PRODUCTS     #   #   #   #   #   #   #   #   #   #
+        #   #   #   #   #   #   APPS.WAREHOUSES     #   #   #   #   #   #   #   #   #   #
 
         json_warehouses_path = os.path.join("apps", "warehouses", "fixtures")
 
@@ -221,3 +224,43 @@ class Command(BaseCommand):
             new_warehouse.save()
             warehouse_num += 1
         print(f"Loaded warehouses.models.Warehouse: {warehouse_num}")
+
+
+        #   #   #   #   #   #   APPS.ORDERS     #   #   #   #   #   #   #   #   #   #
+
+        json_orders_path = os.path.join("apps", "orders", "fixtures")
+
+        order_statuses = load_from_json(json_orders_path, "order_statuses")
+        OrderStatus.objects.all().delete()
+        order_statuses_num = 0
+        for order_status in order_statuses:
+            new_order_status = OrderStatus.objects.create(
+                id=order_status["pk"],
+                title=order_status["fields"]["title"],
+                note=order_status["fields"]["note"],
+            )
+            new_order_status.save()
+            order_statuses_num += 1
+        print(f"Loaded orders.models.OrderStatus: {order_statuses_num}")
+
+
+        orders = load_from_json(json_orders_path, "orders")
+        Order.objects.all().delete()
+        orders_num = 0
+        for order in orders:
+            status, created = OrderStatus.objects.get_or_create(id=order["fields"]["status"])
+            customer, created = Customer.objects.get_or_create(id=order["fields"]["customer"])
+            source, created = Source.objects.get_or_create(id=order["fields"]["source"])
+            new_order = Order.objects.create(
+                id=order["pk"],
+                status=status,
+                customer=customer,
+                send_date=order["fields"]["send_date"],
+                deadline=order["fields"]["deadline"],
+                source=source,
+                created_at=order["fields"]["created_at"],
+                note=order["fields"]["note"],
+            )
+            new_order.save()
+            orders_num += 1
+        print(f"Loaded orders.models.Order: {orders_num}")

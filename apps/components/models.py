@@ -3,10 +3,6 @@ from django.db import models
 from apps.media.models import Media
 from apps.warehouses.models import Warehouse
 
-# fabric - 150 cm wide, 115 density, blue color - $10
-# fabric - 300 cm wide, 115 density, blue color - $15
-# spray paint - 400 ml - $10
-# UV resin - 1 liter - $32
 
 class ComponentType(models.Model):
     """UV resin, glue, fabric"""

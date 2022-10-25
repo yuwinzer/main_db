@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.components.models import ComponentBlueprint
+from apps.components.models import ComponentBlueprint, ComponentTypeProperty
 from apps.customers.models import Customer
 from apps.media.models import Media
 from apps.orders.models import Order
@@ -8,7 +8,7 @@ from apps.warehouses.models import Warehouse
 
 
 class ProductStyle(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, unique=True)
 
     class Meta:
         db_table = "product_styles"
@@ -18,7 +18,7 @@ class ProductStyle(models.Model):
 
 
 class ProductCategory(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, unique=True)
     parent_category = models.ForeignKey(to="self", on_delete=models.CASCADE, null=True, blank=True)
     note = models.CharField(max_length=200, blank=True)
 
@@ -31,7 +31,7 @@ class ProductCategory(models.Model):
 
 
 class ProductScale(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, unique=True)
     note = models.CharField(max_length=200, blank=True)
 
     class Meta:
@@ -42,7 +42,7 @@ class ProductScale(models.Model):
 
 
 class ProductColor(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, unique=True)
     note = models.CharField(max_length=200, blank=True)
     media_thumbnail = models.ForeignKey(Media, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -54,10 +54,10 @@ class ProductColor(models.Model):
 
 
 class ProductBlueprint(models.Model):
-    title = models.CharField(max_length=256)
-    style_id = models.ForeignKey(ProductStyle, on_delete=models.CASCADE)
-    category_id = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
-    size_id = models.ForeignKey(ProductScale, on_delete=models.CASCADE)
+    title = models.CharField(max_length=32, unique=True)
+    style = models.ForeignKey(ProductStyle, on_delete=models.CASCADE)
+    category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
+    size = models.ForeignKey(ProductScale, on_delete=models.CASCADE)
     new_version_of = models.ForeignKey(
         "self", related_name="new_version_of_design", on_delete=models.CASCADE, null=True, blank=True
     )
@@ -69,9 +69,7 @@ class ProductBlueprint(models.Model):
     second_color = models.ForeignKey(
         ProductColor, related_name="second_color", null=True, blank=True, on_delete=models.CASCADE
     )
-    # fabric = models.ManyToManyField(Fabric, blank=True)
     media = models.ManyToManyField(Media, blank=True)
-    component = models.ManyToManyField(ComponentBlueprint, blank=True)
 
     class Meta:
         db_table = "product_blueprints"
@@ -80,8 +78,20 @@ class ProductBlueprint(models.Model):
         return f"{self.title}"
 
 
+class ProductCraft(models.Model):
+    product_blueprint = models.ForeignKey(ProductBlueprint, on_delete=models.CASCADE)
+    component = models.ForeignKey(ComponentBlueprint, on_delete=models.CASCADE)
+    quantity = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+
+    @property
+    def main_measure(self):
+        for prop in ComponentTypeProperty.objects.all():
+            if prop.component_type.title == self.component.type.title and prop.is_main:
+                return prop.measure
+
+
 class ProductStatus(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, unique=True)
     note = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
@@ -95,7 +105,7 @@ class ProductStatus(models.Model):
 class Product(models.Model):
     product_blueprint = models.ForeignKey(ProductBlueprint, on_delete=models.CASCADE)
     reserved_for = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
-    warehouse_id = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     status = models.ForeignKey(ProductStatus, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
     cost_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)

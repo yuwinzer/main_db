@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Source(models.Model):
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=128, unique=True)
     link = models.CharField(max_length=1024, blank=True)
 
     class Meta:
@@ -14,7 +14,7 @@ class Source(models.Model):
 
 class CustomerContact(models.Model):
     source = models.ForeignKey(Source, on_delete=models.CASCADE)
-    unique_name = models.CharField(max_length=1024)
+    unique_name = models.CharField(max_length=1024, unique=True)
 
     class Meta:
         db_table = "customer_contacts"
@@ -37,7 +37,7 @@ class Customer(models.Model):
 
 
 class Country(models.Model):
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=128, unique=True)
 
     class Meta:
         db_table = "countries"
@@ -49,13 +49,15 @@ class Country(models.Model):
 
 class Address(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    state_to_city_line = models.CharField(max_length=512)
-    street_to_app_line = models.CharField(max_length=512)
     receiver_name = models.CharField(max_length=256)
-    payer_name = models.CharField(max_length=256)
-    phone_number_provided = models.CharField(max_length=50, blank=True)
-    phone_number_formatted = models.CharField(max_length=50, blank=True)
+    raw_address_line = models.CharField(max_length=512)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    region_state = models.CharField(max_length=256)
+    city = models.CharField(max_length=256)
+    address = models.CharField(max_length=512)
+    zip_code = models.CharField(max_length=16, blank=True)
+    raw_phone_number = models.CharField(max_length=50, blank=True)
+    phone_number = models.CharField(max_length=50, blank=True)
 
     class Meta:
         db_table = "addresses"
