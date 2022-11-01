@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.components.models import ComponentBlueprint, ComponentTypeProperty
+from apps.components.models import ComponentBlueprint
 from apps.customers.models import Customer
 from apps.media.models import Media
 from apps.orders.models import Order
@@ -85,9 +85,7 @@ class ProductCraft(models.Model):
 
     @property
     def main_measure(self):
-        for prop in ComponentTypeProperty.objects.all():
-            if prop.component_type.title == self.component.type.title and prop.is_main:
-                return prop.measure
+        return self.component.type.main_property.measure
 
 
 class ProductStatus(models.Model):
@@ -115,20 +113,12 @@ class Product(models.Model):
     is_gift = models.BooleanField(default=False)
     is_replacement = models.BooleanField(default=False)
 
-    @property
-    def fabrics(self):
-        fabrics = []
-        for component in self.product_blueprint.component.all():
-            if component.type.title == "Fabric":
-                fabrics.append(component.title)
-        return ",".join(fabrics)
-
     class Meta:
         db_table = "products"
 
     def __str__(self):
         return f"{self.product_blueprint} {self.product_blueprint.base_color} " \
-               f"{self.product_blueprint.second_color} {self.fabrics}"
+               f"{self.product_blueprint.second_color}"
 
 
 class ProductRefund(models.Model):

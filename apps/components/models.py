@@ -4,47 +4,6 @@ from apps.media.models import Media
 from apps.warehouses.models import Warehouse
 
 
-class ComponentType(models.Model):
-    """UV resin, glue, fabric"""
-
-    title = models.CharField(max_length=24)
-
-    class Meta:
-        db_table = "component_types"
-
-    def __str__(self):
-        return f"{self.title}"
-
-
-class ComponentColor(models.Model):
-    title = models.CharField(max_length=6)
-    note = models.CharField(max_length=200, null=True, blank=True)
-    media_thumbnail = models.ForeignKey(Media, on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        db_table = "component_colors"
-
-    def __str__(self):
-        return f"{self.title}"
-
-
-class ComponentBlueprint(models.Model):
-    title = models.CharField(max_length=256)
-    type = models.ForeignKey(
-        ComponentType, related_name="component_type", on_delete=models.CASCADE, null=True, blank=True
-    )
-    is_active = models.BooleanField(default=True)
-    note = models.CharField(max_length=200, null=True, blank=True)
-    color = models.ForeignKey(ComponentColor, on_delete=models.CASCADE, null=True, blank=True)
-    media_thumbnail = models.ForeignKey(Media, on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        db_table = "component_blueprints"
-
-    def __str__(self):
-        return f"{self.title}"
-
-
 class Measure(models.Model):
     """a unit of measurement - l, ml, pc, m"""
     title = models.CharField(max_length=4)
@@ -57,11 +16,9 @@ class Measure(models.Model):
         return f"{self.title}"
 
 
-class ComponentTypeProperty(models.Model):
-    """Properties for component types, fabric type - density, wide"""
-    component_type = models.ForeignKey(ComponentType, on_delete=models.CASCADE)
+class ComponentProperty(models.Model):
+    """Properties for components - density, wide, length"""
     title = models.CharField(max_length=64)
-    is_main = models.BooleanField(default=False)
     measure = models.ForeignKey(Measure, on_delete=models.CASCADE)
 
     class Meta:
@@ -69,17 +26,75 @@ class ComponentTypeProperty(models.Model):
         verbose_name_plural = "component type properties"
 
     def __str__(self):
-        string = f"{self.component_type} - {self.title}"
-        if self.is_main:
-            return f"{string} [M]"
-        else:
-            return f"{string}"
+        return f"{self.title} {self.measure}"
+
+
+class ComponentType(models.Model):
+    """bolt, paper"""
+    title = models.CharField(max_length=24)
+    main_property = models.ForeignKey(ComponentProperty, related_name="main_property", on_delete=models.CASCADE)
+    properties = models.ManyToManyField(ComponentProperty, blank=True)
+
+    class Meta:
+        db_table = "component_types"
+
+    def __str__(self):
+        return f"{self.title}"
+
+
+class ComponentColor(models.Model):
+    title = models.CharField(max_length=6)
+
+    class Meta:
+        db_table = "component_colors"
+
+    def __str__(self):
+        return f"{self.title}"
+
+
+class ComponentManufacturer(models.Model):
+    title = models.CharField(max_length=32)
+    link = models.CharField(max_length=1024, null=True, blank=True)
+
+    class Meta:
+        db_table = "component_manufacturers"
+
+    def __str__(self):
+        return f"{self.title}"
+
+
+class ComponentBlueprint(models.Model):
+    title = models.CharField(max_length=256)
+    type = models.ForeignKey(
+        ComponentType, related_name="component_type", on_delete=models.CASCADE, null=True, blank=True
+    )
+    is_active = models.BooleanField(default=True)
+    note = models.CharField(max_length=200, null=True, blank=True)
+    manufacturer = models.ForeignKey(ComponentManufacturer, on_delete=models.CASCADE, null=True, blank=True)
+    color = models.ForeignKey(ComponentColor, on_delete=models.CASCADE, null=True, blank=True)
+    color_media_thumbnail = models.ForeignKey(Media, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        db_table = "component_blueprints"
+
+    def __str__(self):
+        return f"{self.title}"
+
+
+class ComponentThumbnail(models.Model):
+    component_blueprint = models.ForeignKey(ComponentBlueprint, on_delete=models.CASCADE)
+    media_thumbnail = models.ForeignKey(Media, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        db_table = "component_thumbnails"
+
+    def __str__(self):
+        return f"{self.component_blueprint}"
 
 
 class PropertyValue(models.Model):
-    """"Values for properties in components - Fabric wide = 150"""
     component_blueprint = models.ForeignKey(ComponentBlueprint, on_delete=models.CASCADE)
-    property = models.ForeignKey(ComponentTypeProperty, on_delete=models.CASCADE)
+    property = models.ForeignKey(ComponentProperty, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:

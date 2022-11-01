@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.components.models import ComponentColor, ComponentType, Measure, ComponentBlueprint, ComponentInStock, Shop, \
-    ComponentPrice, ComponentTypeProperty, PropertyValue
+    ComponentPrice, ComponentProperty, PropertyValue, ComponentThumbnail
 
 
 class PropertyValueInline(admin.TabularInline):
@@ -22,7 +22,6 @@ admin.site.register(ComponentBlueprint, ComponentBlueprintAdmin)
 admin.site.register(ComponentInStock)
 admin.site.register(Shop)
 admin.site.register(ComponentPrice)
-admin.site.register(ComponentTypeProperty)
+admin.site.register(ComponentProperty)
 admin.site.register(PropertyValue)
-
-
+admin.site.register(ComponentThumbnail)

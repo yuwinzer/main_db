@@ -26,7 +26,7 @@ class CustomerContact(models.Model):
 
 class Customer(models.Model):
     name = models.CharField(max_length=128, blank=True)
-    customer_contact = models.ManyToManyField(CustomerContact)
+    customer_contacts = models.ManyToManyField(CustomerContact)
     friends = models.ManyToManyField("self", blank=True)
 
     class Meta:

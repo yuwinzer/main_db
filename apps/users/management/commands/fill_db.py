@@ -99,10 +99,10 @@ class Command(BaseCommand):
             )
 
             customer_contacts = []
-            for customer_contact_id in customer["fields"]["customer_contact"]:
+            for customer_contact_id in customer["fields"]["customer_contacts"]:
                 customer_contact, created = CustomerContact.objects.get_or_create(id=customer_contact_id)
                 customer_contacts.append(customer_contact)
-            new_customer.customer_contact.set(customer_contacts)
+            new_customer.customer_contacts.set(customer_contacts)
 
             friends_list = []
             for friends_id in customer["fields"]["friends"]:
